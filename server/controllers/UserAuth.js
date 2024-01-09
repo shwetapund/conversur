@@ -1,16 +1,30 @@
 import User from './../model/User.js';
+import md5 from 'md5';
 
 const signupApi = async(req,res)=>{
-    const {name, email, password, gender, mobile} = req.body;
+    const {userName, email, password} = req.body;
+
+    const nameAlreadyExist = await User.findOne({userName})
+    if(nameAlreadyExist){
+        res.status(400).json({
+            success:false,
+            message:'name already exists'
+        })
+    }
+    const emailAlreadyExits = await User.findOne({email})
+    if(emailAlreadyExits){
+        res.status(400).json({
+            success:false,
+            message:'email already exists'
+        })
+    }
 
     try{
         
     const obj = new User({
-        name, 
+        userName, 
         email,
-        password, 
-        gender, 
-        mobile
+        password: md5(password),        
     })
     const savedUser = await obj.save();
 
@@ -40,7 +54,7 @@ const loginApi = async(req,res)=>{
 
    const findUser = await User.findOne({
     email:email,
-    password:password
+    password: md5(password)
    }).select('email gender mobile name')
 
    if(!findUser){
