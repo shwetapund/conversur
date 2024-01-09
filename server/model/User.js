@@ -20,7 +20,8 @@ const userSchema = new Schema({
         required:true
     },
     gender:{
-        type:Boolean,
+        type:String,
+        enum:['male','female','prefer not to say']
     }
 })
 
